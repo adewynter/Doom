@@ -1,5 +1,7 @@
 # Will GPT-4 Run DOOM?
 
+## A.k.a "Doomguy is all you need"
+
 This is the repository for the paper "[Will GPT-4 Run DOOM?](https://arxiv.org/abs/2403.05468)". 
 We find that GPT-4 is capable of playing the game to an acceptable degree, with more complex call (prompt) schemes yielding better results. 
 We also observe, however, that this model's reasoning capabilities around things like object permanence and pathing are not good: the model will forget about objects not immediately in the frame (even though they are encoded in the history), and will frequently shoot walls, get stuck in corners, and walk on acid.
