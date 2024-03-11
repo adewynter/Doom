@@ -2,11 +2,21 @@ MIT License
 
 Copyright (c) 2024 Adrian de Wynter
 
+This repository follows the MIT licence (below) with the exception of the following things:
+- All Doom source code/IP/assets are the property of their authors (not distributed here),
+and follow their own licence.
+- All Python adapters to Doom are the property of their authors, and follow their own licence. 
+- You may not use this code or derivatives of it to cause harm to another person. This includes,
+but is not limited to: military uses, surveillance, law enforcement, etcetera. Harm can be
+both psychological and physical. 
+
+With that:
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
+in the Software without restriction (except the above), including without 
+limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+and/or sell copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
