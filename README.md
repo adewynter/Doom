@@ -2,7 +2,7 @@
 
 ## A.k.a "Doomguy is all you need"
 
-This is the repository for the paper "[Will GPT-4 Run DOOM?](https://arxiv.org/abs/2403.05468)". 
+This is the repository for the paper "[Will GPT-4 Run DOOM?](https://ieeexplore.ieee.org/document/10752360)". 
 We find that GPT-4 is capable of playing the game to an acceptable degree, with more complex call (prompt) schemes yielding better results. 
 We also observe, however, that this model's reasoning capabilities around things like object permanence and pathing are not good: the model will forget about objects not immediately in the frame (even though they are encoded in the history), and will frequently shoot walls, get stuck in corners, and walk on acid.
 
@@ -48,13 +48,12 @@ Here's a diagram of the call stack:
 If you've found this code or the paper useful in your work, please cite it:
 ```
 @article{DeWynterDOOM,
-	title = {Will {GPT}-4 Run {DOOM}?},
-	author = {Adrian de Wynter},
-    journal = {ArXiv},
-    year = {2024},
-    volume = {abs/2403.05468},
-    url = {https://arxiv.org/abs/2403.05468},
-    doi = {https://doi.org/10.48550/arXiv,2403.05468}
+   title={{Will GPT-4 Run DOOM?}},
+   author = {Adrian de Wynter},
+   year={2024},
+   journal={{IEEE} {T}ransactions on {G}ames},
+   doi={10.1109/10.1109/TG.2024.3497601},
+   url={https://doi.org/10.1109/TG.2024.3497601}
 }
 ```
 
