@@ -1,6 +1,8 @@
-# Will GPT-4 Run DOOM?
+# Will GPT-4 (and 5) Run DOOM?
 
 ## A.k.a "Doomguy is all you need"
+
+_Updated with GPT-5, new prompts, etc!_
 
 This is the repository for the paper "[Will GPT-4 Run DOOM?](https://ieeexplore.ieee.org/document/10752360)". 
 We find that GPT-4 is capable of playing the game to an acceptable degree, with more complex call (prompt) schemes yielding better results. 
@@ -14,7 +16,24 @@ Sample runs are in the [outputs](outputs/README.md) folder. Can you do better? C
 3. Modify the `llmclient.py` class to work with your own LLM client (i.e., Azure OpenAI, regular OpenAI, etc)
 
 
+_Note_: for cydoomgeneric, I couldn't reproduce the work with commits later than `4f3c4097965fb43bfe1944e99f3e1ec04f70e963`. I am not smart enough to figure out what's wrong and send a fix to the author, but if you do, please halp
+
+_Note_: for the original GPT-4 work (including completion prompts, more samples, even messier code, etc), just check out main.
+
 # Quickstart
+
+
+1. Create a venv (I called mine ~~bitey~~ `doomenv`, so the notebook looks for that) with the following:
+
+```
+pip install cython numpy matplotlib
+cd <wherever you pulled cydoomgeneric>
+python setup.py install
+```
+
+
+Then:
+
 1. Open the notebook and follow the instructions in there for setup.
 2. You can modify the following variables (ok, you can modify the entire code, but this is the quickstart):
   - `DO_PLAN`: (call the planner every `PLAN_INTERVAL_FRAMES`)
@@ -22,6 +41,15 @@ Sample runs are in the [outputs](outputs/README.md) folder. Can you do better? C
   - `KLEVEL_INTERVAL`: (call k-levels every `KLEVEL_INTERVAL` frames). It should be a multiple of `PLAN_INTERVAL_FRAMES`: or else you'll get lots of hallucinations and your code will potato out.
   - `PROMPT_TYPE`: one of `"klevels", "walkthrough", "plan"`, or anything (which will be `"naive"`). I would use `"walkthrough"` since it is more lightweight than plan/k-levels but better performing than naive.
 3. You can only end the game by restarting the kernel (seems to be some sort of memory issue).
+
+
+To create a gif:
+
+```
+python gifmaker.py --input <logpath for your run with all the frames> --output <some name>.gif
+```
+It also allows you to control looping and fps.
+
 
 
 # Common issues
