@@ -12,11 +12,12 @@ WALTHROUGH_E1_M1 = """1. You start out the game in a room with a blue pool.
 9. Inside the switch room there is a switch on the right wall. Hit the switch after getting the items, if you need them.""" #, then return to the bigger room.Head back up the stairs, toward the beginning, then run into that opening and onto the ledge that dropped. When it rises, get the bonuses in the winding hallway. When you've had your fill, return to the "exit" room, and enter the exit door."""
 
 
-def build_vision_prompt(image_path):
+def build_vision_prompt(image_path, is_phi: bool=False):
     """
     Vision prompt. 
     Parameters:
         image_path (str): a path to the image file. Pass in debug for testing.
+        is_phi: Phi-4 is weird on how it handles requests. So, we'll do an interrupt. Ok, it might be the same, but tbh I'm so lost on the 38 offerings.
     """
     image_prompt = """This a screenshot from DOOM. Give me a description of the screenshot showing what you see, and what is in the HUD, in that order.
 If there are enemies or objects, indicate their position on the screen (left, right, or centre), but ONLY if there are any.
@@ -28,12 +29,19 @@ Your response should be in JSON:
     if image_path == "debug":
         return {"messages": [{"role": "user", "content": ["test"]}]}
     encoded_image = base64.b64encode(open(image_path, 'rb').read()).decode('ascii')
-    return [{"role": "user", "content": [{"type": "text", "text": image_prompt},
-                                         {"type": "image_url",
-                                          "image_url": f"data:image/png;base64,{encoded_image}"
-                                         }, 
-                                         ],
-            }]
+    usr_content = [{"type": "text", "text": image_prompt},
+                   {"type": "image_url", "image_url": f"data:image/png;base64,{encoded_image}"}, 
+                  ]
+
+    if is_phi:
+        usr_content = [{"type": "text", "text": image_prompt},
+                       {"type": "image_url",  
+                        "image_url": {"url": f"data:image/png;base64,{encoded_image}"}
+                        }, 
+                      ]
+
+    return [{"role": "user", "content": usr_content}]
+
 
 # Shared prompt components
 AVAILABLE_ACTIONS = """# Available actions:
@@ -570,4 +578,64 @@ Your output should be something like:
     user_prompt += f"<state>\n{state.strip()}\n</state>\n"
 
     return [{"role": "system", "content": this_sys_prompt}, {"role": "user", "content": user_prompt}]
+
+
+def get_unified_prompt(image_path: str, history: str, plan: str=None, is_phi: bool=False):
+    """
+    Unified vision-action prompt.
+
+    Parameters:
+        image_path (str): Path to the image
+        history (str): Concatenated history of the game so far
+        is_phi (bool): Phi requires a weird signature
+    """
+    sys_prompt_no_plan = """# Instructions:
+You are a videogame playing bot. You are playing 1993 DOOM.
+Your job is to play the game: traverse the level, kill enemies, ensure you have ammo and health.
+
+You will get a screenshot from the game. 
+First output a description of the screenshot showing what you see, and what is in the HUD, in that order.
+If there are enemies or objects, indicate their position on the screen (left, right, or centre), but ONLY if there are any.
+
+Then, based on that, take ONE action based on the state given; and the history of what you did before.
+{available_actions}
+# Additionally:
+- If the History shows that you haven't left the room, try exploring (UP/DOWN/LEFT/RIGHT), using items or doors. Walk UP to the item to collect them. Walk UP to doors, and USE it to open it.
+- If the History shows that you have too many WAITs, UPs, DOWNs, LEFTs, or RIGHTs, try exploring (UP/DOWN/LEFT/RIGHT), using items or doors. Walk UP to the item or door, and USE it.
+{additional_instructions}
+- If your HUD says that your health is 0%, output GAME OVER instead, but only if that is the case
+- The player means YOU.
+
+# Important note:
+
+Return your output in JSON as follows:
+{{
+    "Description": <a short description of the room>,
+    "Action": <only the action: UP, DOWN, FIRE, etc>
+}}
+Only use the keys "Description", "Action" and the values from the list. 
+"""
+
+    this_sys_prompt = sys_prompt_no_plan.format(available_actions=AVAILABLE_ACTIONS, 
+                                                additional_instructions="\n".join(ADDITIONAL_INSTRUCTIONS.split("\n")[2:]).strip() + "\n"
+                                                )
+
+
+    user_prompt_str = f"<history>\n{history.strip()}\n</history>"
+    if plan is not None: user_prompt_str += f"<plan>\n{plan.strip()}\n</plan>\n"
+
+    encoded_image = base64.b64encode(open(image_path, 'rb').read()).decode('ascii')
+    usr_content = [{"type": "text", "text": user_prompt_str},
+                   {"type": "image_url", "image_url": f"data:image/png;base64,{encoded_image}"}, 
+                  ]
+
+    if is_phi:
+        usr_content = [{"type": "text", "text": user_prompt_str},
+                       {"type": "image_url",  
+                        "image_url": {"url": f"data:image/png;base64,{encoded_image}"}
+                        }, 
+                      ]
+
+    return [{"role": "system", "content": this_sys_prompt}, 
+            {"role": "user", "content": usr_content}]
 
